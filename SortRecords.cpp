@@ -36,16 +36,19 @@ void writeRecord(ofstream& file, const vector<double>& record, bool endlInTheEnd
         file << record[i];
         if (i < record.size() - 1) file << " ";
     }
-    file << ",";
-    if(endlInTheEnd)
-        file << endl;
+    //file << ",";
+    //if(endlInTheEnd)
+    file << endl;
 }
 
 
-vector<vector<double>> readRun(ifstream& file) {
+vector<vector<double>> readRun(ifstream& file, vector<double>& currentRecord) {
     vector<vector<double>> run;
     vector<double> record, prev;
-    record = readRecord(file);
+    if (!currentRecord.empty())
+        record = currentRecord;
+    else
+        record = readRecord(file);
     
     prev = record;
     while (!file.eof() && calculateKey(prev) <= calculateKey(record)) {
@@ -54,15 +57,161 @@ vector<vector<double>> readRun(ifstream& file) {
         record = readRecord(file);
         
     }
+    currentRecord = record;
+    return run;
 }
 
-void writeRun(ofstream& file, vector<vector<double>>& run) {
+void writeRun(ofstream& file, const vector<vector<double>>& run) {
     bool endlInTheEnd;
     for (size_t i = 0; i < run.size(); i++) {
-        endlInTheEnd = i < run.size() - 2;
+        endlInTheEnd = (i < run.size() - 1?true:false);
         writeRecord(file, run[i], endlInTheEnd);
     }
 }
+
+void showTape(ifstream& file, vector<vector<double>>& currun, vector<double>& currentRec, bool opt6) {
+    int currunid = 0;
+    while (!file.eof()) {
+        currun = readRun(file, currentRec);
+        cout << "Run " << currunid << ": " << endl;
+        if (opt6) {
+            for (int i = 0; i < currun.size(); i++) {
+                for (int j = 0; j < currun[i].size(); j++) {
+                    cout << currun[i][j] << " ";
+                }
+                cout << "Key: " << calculateKey(currun[i]);
+                cout << endl;
+            }
+        }
+        currunid++;
+    }
+}
+
+
+void distributeRuns(const string& inputFile, const string& tape1, const string& tape2, int& frp, int& fwp) {
+    ifstream infile(inputFile);
+    ofstream out1(tape1), out2(tape2);
+    vector<double> currentRecord;
+    vector<vector<double>> run;
+    bool tapeWrite1 = true;
+    while (!infile.eof()) {
+        run = readRun(infile,currentRecord);
+        writeRun(tapeWrite1 ? out1 : out2, run);
+        tapeWrite1 = !tapeWrite1;
+    }
+    if (run.back() != currentRecord&&!currentRecord.empty())
+        writeRecord(tapeWrite1 ? out1 : out2, currentRecord, false);
+    infile.close();
+    out1.close();
+    out2.close();
+    frp++;
+    fwp += 2;
+       
+}
+
+void mergeRuns(string& tape1, string& tape2, string& tape3,int& frp, int& fwp) {
+    ifstream in1(tape1), in2(tape2);
+    ofstream out3(tape3);
+    vector<double> currentRecord1;
+    vector<double> currentRecord2;
+
+    vector<vector<double>>run1 = readRun(in1,currentRecord1);
+    vector<vector<double>>run2 = readRun(in2, currentRecord2);
+
+    while (!run1.empty() || !run2.empty()) {
+        vector<vector<double>> mergedRun;
+        while (!run1.empty() && !run2.empty()) {
+            if (calculateKey(run1.front()) <= calculateKey(run2.front())) {
+                mergedRun.push_back(run1.front());
+                run1.erase(run1.begin());
+            }
+            else {
+                mergedRun.push_back(run2.front());
+                run2.erase(run2.begin());
+            }
+        }
+        mergedRun.insert(mergedRun.end(), run1.begin(), run1.end());
+        mergedRun.insert(mergedRun.end(), run2.begin(), run2.end());
+        writeRun(out3, mergedRun);
+
+        run1 = readRun(in1,currentRecord1);
+        run2 = readRun(in2, currentRecord2);
+    }
+
+    in1.close();
+    in2.close();
+    out3.close();
+    frp += 2;
+    fwp++;
+}
+
+
+
+
+
+void naturalMergeSort(const string& inputFile, bool opt5, bool opt6) {
+    string tape1 = "tape1.txt";
+    string tape2 = "tape2.txt";
+    string tape3 = "tape3.txt";
+    int fileReads = 0;
+    int fileWrites = 0;
+    int* frp = &fileReads;
+    int* fwp = &fileWrites;
+    vector<double>currentRec;
+    vector<vector<double>> currun;
+    bool sorted;
+    int phase = 1;
+
+    distributeRuns(inputFile, tape1, tape2, *frp, *fwp);
+
+
+    while (true) {
+        cout << "Phase " << phase << ":\n";
+        sorted = true;
+        mergeRuns(tape1, tape2, tape3,*frp, *fwp);
+        ifstream checkSorted(tape3);
+        fileReads++;
+        //readRun(checkSorted,currentRec);
+        //if (!checkSorted.eof())
+        //    sorted = false;
+        vector<double> curr, prev;
+        prev = readRecord(checkSorted);
+        while (!checkSorted.eof()) {
+            curr = readRecord(checkSorted);
+            if (!curr.empty()&&calculateKey(curr) < calculateKey(prev)) {
+                sorted = false;
+                break;
+            }
+            prev = curr;
+        }
+        checkSorted.close();
+        if (opt5 || opt6) {
+            ifstream t1(tape1), t2(tape2), t3(tape3);
+            cout << "Tape1: " << endl;
+            showTape(t1, currun, currentRec, opt6);
+            cout << "Tape2: " << endl;
+            showTape(t2, currun, currentRec, opt6);
+            cout << "Tape3: " << endl;
+            showTape(t3, currun, currentRec, opt6);
+            t1.close();
+            t2.close();
+            t3.close();
+        }
+        if (sorted) {
+            break;
+        }
+        distributeRuns(tape3, tape1, tape2,*frp,*fwp);
+        phase++;
+    }
+    cout << "File sorted successfuly!" << endl;
+    cout << "Number of phases: " << phase << endl;
+    cout << "Files were read " << fileReads << " times" << endl;
+    cout << "Files were written " << fileWrites << " times" << endl;
+
+    
+}
+
+
 
 // Function to read 'nb' records into memory and sort them
 /*void createRun(ifstream& inputFile, ofstream& runFile, int nb) {

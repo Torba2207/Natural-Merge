@@ -14,19 +14,23 @@ int main() {
 	srand(time(0));
 	int choice = 0;
 	string inputFile = "text.txt";
-	string outputFile = "sortedText.txt";
+	string outputFile = "tape3.txt";
 
 	int blockingFactor = B_FACTOR;
 	int numOfBuffers = NUM_OF_BUFFERS;
-	int rec=20;
+	int rec=100;
+	//distributeRuns(inputFile, "tape1.txt", "tape2.txt");
 	//generateRecords(inputFile, rec, true);
 	//mergeSortWithBigBuffers(inputFile, outputFile, blockingFactor * numOfBuffers);
-	/*while (choice != 5) {
+	
+	while (choice != 7) {
 		cout << "1. Random input" << endl;
 		cout << "2. Manual input" << endl;
 		cout << "3. Sort" << endl;
 		cout << "4. Sort Output" << endl;
-		cout << "5. Exit" << endl;
+		cout << "5. Sort with showing tapes and number of runs" << endl;
+		cout << "6. Sort with showing tapes and runs" << endl;
+		cout << "7. Exit" << endl;;
 		cin >> choice;
 		switch (choice)
 		{
@@ -44,7 +48,7 @@ int main() {
 			break;
 		}
 		case 3: {
-			mergeSortWithBigBuffers(inputFile, outputFile, blockingFactor * numOfBuffers);
+			naturalMergeSort(inputFile, false,false);
 			break;
 		}
 		case 4: {
@@ -62,6 +66,17 @@ int main() {
 			break;
 		}
 		case 5: {
+			naturalMergeSort(inputFile, true, false);
+			break;
+		}
+
+		case 6: {
+			naturalMergeSort(inputFile, false, true);
+			break;
+		}
+		
+		case 7: {
+			cout << "Exiting..." << endl;
 			break;
 		}
 		default:
@@ -70,6 +85,6 @@ int main() {
 		
 
 		
-	}*/
+	}
 	return 0;
 }

@@ -27,7 +27,7 @@ void writeRecordUS(ofstream& file, const vector<double>& record, bool endlInTheE
         file << record[i];
         if (i < record.size() - 1) file << " ";
     }
-    file << ",";
+    //file << ",";
     if(endlInTheEnd)
         file << endl;
 }
