@@ -18,25 +18,26 @@ int main() {
 
 	int blockingFactor = B_FACTOR;
 	int numOfBuffers = NUM_OF_BUFFERS;
-	int rec=100;
+	int rec = 100;
 	//distributeRuns(inputFile, "tape1.txt", "tape2.txt");
 	//generateRecords(inputFile, rec, true);
 	//mergeSortWithBigBuffers(inputFile, outputFile, blockingFactor * numOfBuffers);
-	
-	while (choice != 7) {
+
+	while (choice != 8) {
 		cout << "1. Random input" << endl;
 		cout << "2. Manual input" << endl;
-		cout << "3. Sort" << endl;
-		cout << "4. Sort Output" << endl;
-		cout << "5. Sort with showing tapes and number of runs" << endl;
-		cout << "6. Sort with showing tapes and runs" << endl;
-		cout << "7. Exit" << endl;;
+		cout << "3. Test file output" << endl;
+		cout << "4. Sort" << endl;
+		cout << "5. Sort Output" << endl;
+		cout << "6. Sort with showing tapes and number of runs" << endl;
+		cout << "7. Sort with showing tapes and runs" << endl;
+		cout << "8. Exit" << endl;;
 		cin >> choice;
 		switch (choice)
 		{
 		case 1: {
 			cout << "Enter num of records: ";
-			
+
 			cin >> rec;
 			generateRecords(inputFile, rec, true);
 			break;
@@ -48,10 +49,24 @@ int main() {
 			break;
 		}
 		case 3: {
-			naturalMergeSort(inputFile, false,false);
+			ifstream inf(inputFile);
+			string line;
+			int counter = 0;
+			if (inf.is_open()) {
+				while (getline(inf, line)) {
+					cout << line << endl;
+					counter++;
+				}
+				inf.close();
+				cout << counter << " Records" << endl;
+			}
 			break;
 		}
 		case 4: {
+			naturalMergeSort(inputFile, false, false);
+			break;
+		}
+		case 5: {
 			ifstream opf(outputFile);
 			string line;
 			int counter = 0;
@@ -65,26 +80,26 @@ int main() {
 			}
 			break;
 		}
-		case 5: {
+		case 6: {
 			naturalMergeSort(inputFile, true, false);
 			break;
 		}
 
-		case 6: {
+		case 7: {
 			naturalMergeSort(inputFile, false, true);
 			break;
 		}
-		
-		case 7: {
+
+		case 8: {
 			cout << "Exiting..." << endl;
 			break;
 		}
 		default:
 			break;
 		}
-		
 
-		
+
+
 	}
 	return 0;
 }

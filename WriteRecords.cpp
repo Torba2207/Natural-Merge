@@ -28,8 +28,8 @@ void writeRecordUS(ofstream& file, const vector<double>& record, bool endlInTheE
         if (i < record.size() - 1) file << " ";
     }
     //file << ",";
-    if(endlInTheEnd)
-        file << endl;
+    //if(endlInTheEnd)
+    file << endl;
 }
 
 

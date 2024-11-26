@@ -1,5 +1,2 @@
 ﻿  SortRecords.cpp
-  Source.cpp
-C:\Users\Torba\Projects\SBD_Project_Task1\Source.cpp(14,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Generating Code...
   SBD_Project_Task1.vcxproj -> C:\Users\Torba\Projects\SBD_Project_Task1\x64\Debug\SBD_Project_Task1.exe

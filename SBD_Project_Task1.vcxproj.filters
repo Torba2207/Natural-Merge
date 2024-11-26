@@ -24,12 +24,18 @@
     <ClCompile Include="SortRecords.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BlockIO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WriteRecords.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SortRecords.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockIO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

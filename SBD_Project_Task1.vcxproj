@@ -127,11 +127,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BlockIO.cpp" />
     <ClCompile Include="SortRecords.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="WriteRecords.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlockIO.h" />
     <ClInclude Include="SortRecords.h" />
     <ClInclude Include="WriteRecords.h" />
   </ItemGroup>
